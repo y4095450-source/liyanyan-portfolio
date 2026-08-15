@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>黎焱焱 · 暖白雾里那道光</title>
+  <meta name="description" content="瑜伽人 / 颂钵疗愈师 / 学 AI 的人 — 在东方与未来之间,听身体的声音。">
+  <meta name="theme-color" content="#F4EFE6">
+  <style>
+    /* ============================================================
+       0. 字体(Cormorant Garamond 本地 woff2,中文走系统 fallback)
+       ============================================================ */
+    @font-face{
+      font-family:'Cormorant Garamond';
+      font-style:normal;
+      font-weight:400 700;
+      font-display:swap;
+      src:url('assets/fonts/cormorant-garamond-400.woff2') format('woff2');
+      unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+    @font-face{
+      font-family:'Cormorant Garamond';
+      font-style:italic;
+      font-weight:400 700;
+      font-display:swap;
+      src:url('assets/fonts/cormorant-garamond-italic-400.woff2') format('woff2');
+      unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+
+    /* ============================================================
+       1. TOKENS(verbatim 自 specs/TOKENS与文案.md §1)
+       ============================================================ */
+    :root{
+      --c-bg:#F4EFE6;
+      --c-ink:#1A1A1A;
+      --c-gold:#C9A36B;
+      --c-grey:#5C5C5C;
+      --c-mask:rgba(244,239,230,0.85);
+      --c-deep:#2A2419;
+      --c-fog:rgba(244,239,230,0.55);
+      --c-line:rgba(26,26,26,0.12);
+      --font-zh:'Source Han Serif SC','Noto Serif SC','Songti SC','STSong','STSongti-SC-Regular','SimSun','宋体',serif;
+      --font-en:'Cormorant Garamond','EB Garamond','Garamond',serif;
+      --t-base:cubic-bezier(.2,.7,.2,1);
+      --t-slow:cubic-bezier(.16,1,.3,1);
+      --maxw:1440px;
+    }
+
+    /* ============================================================
+       2. Reset + 基础排版
+       ============================================================ */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+    /* 🔴 自检 D 段硬要求:禁 overflow-x:hidden,改 clip(防 Safari sticky 失效) */
+    html,body{overflow-x:clip}
+    html,body{height:100%}
+    body{
+      font-family:var(--font-zh);
+      font-size:17px;
+      line-height:1.7;
+      color:var(--c-ink);
+      background:var(--c-bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      letter-spacing:0.02em;
+      position:relative;
+      min-height:100vh;
+    }
+    img{display:block;max-width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+    ul{list-style:none}
+    ::selection{background:var(--c-gold);color:var(--c-bg)}
+
+    /* 衬线大字 letter-spacing */
+    .zh-display,.en-display,h1,h2,h3{letter-spacing:0.05em;font-weight:600}
+    .en{font-family:var(--font-en);font-style:italic;font-weight:400}
+    .mono{font-family:'Cormorant Garamond',serif;font-feature-settings:"tnum"}
+
+    /* ============================================================
+       3. 颗粒滤镜(0.5% 颗粒,全站 fixed 覆盖)
+       ============================================================ */
+    .grain{
+      position:fixed;inset:0;pointer-events:none;z-index:9000;
+      opacity:0.05;mix-blend-mode:multiply;
+      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+      background-size:200px 200px;
+    }
+
+    /* ============================================================
+       4. HUD 四角 10.5px 窄字
+       ============================================================ */
+    .hud{
+      position:fixed;z-index:200;
+      font-family:var(--font-en);
+      font-size:10.5px;letter-spacing:3px;
+      color:var(--c-deep);
+      mix-blend-mode:multiply;
+      pointer-events:none;
+      text-transform:uppercase;
+    }
+    .hud-tl{top:18px;left:24px}
+    .hud-tr{top:18px;right:24px}
+    .hud-bl{bottom:18px;left:24px}
+    .hud-br{bottom:18px;right:24px}
+    @media (max-width:680px){
+      .hud{font-size:9px;letter-spacing:2px}
+      .hud-tl{top:12px;left:14px}
+      .hud-tr{top:12px;right:14px}
+      .hud-bl{bottom:12px;left:14px}
+      .hud-br{bottom:12px;right:14px}
+    }
+
+    /* ============================================================
+       5. NAV(sticky 顶条)
+       ============================================================ */
+    .nav{
+      position:sticky;top:0;z-index:150;
+      display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+      padding:18px 40px;
+      background:linear-gradient(to bottom,rgba(244,239,230,0.92),rgba(244,239,230,0.65));
+      backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--c-line);
+    }
+    .nav-logo{
+      font-family:var(--font-zh);
+      font-weight:300;font-size:22px;
+      letter-spacing:0.5em;
+      color:var(--c-ink);
+      padding-left:0.5em; /* 补偿字间距让视觉居中 */
+    }
+    .nav-menu{display:flex;gap:42px;justify-self:center}
+    .nav-menu a{
+      font-family:var(--font-en);
+      font-size:13px;letter-spacing:0.3em;
+      text-transform:uppercase;
+      color:var(--c-grey);
+      transition:color 0.4s var(--t-base);
+      position:relative;
+    }
+    .nav-menu a::after{
+      content:'';position:absolute;left:50%;bottom:-6px;width:0;height:1px;
+      background:var(--c-gold);transition:width 0.4s var(--t-base),left 0.4s var(--t-base);
+    }
+    .nav-menu a:hover{color:var(--c-ink)}
+    .nav-menu a:hover::after{width:100%;left:0}
+    .nav-platforms{display:flex;gap:14px;justify-self:end;align-items:center}
+    .platform-pill{
+      font-family:var(--font-en);font-size:11px;letter-spacing:0.25em;
+      text-transform:uppercase;
+      padding:7px 14px;border:1px solid var(--c-line);
+      color:var(--c-ink);border-radius:999px;
+      transition:all 0.4s var(--t-base);
+    }
+    .platform-pill:hover{border-color:var(--c-gold);color:var(--c-gold)}
+    .nav-burger{display:none}
+    @media (max-width:860px){
+      .nav{grid-template-columns:auto 1fr auto;padding:14px 18px}
+      .nav-logo{font-size:18px;letter-spacing:0.4em}
+      .nav-menu{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:var(--c-bg);padding:20px 24px;border-bottom:1px solid var(--c-line)}
+      .nav-menu.open{display:flex}
+      .nav-menu a{padding:12px 0;border-bottom:1px solid var(--c-line);width:100%;text-align:center}
+      .nav-burger{
+        display:flex;flex-direction:column;gap:4px;justify-self:end;
+        width:32px;height:32px;align-items:center;justify-content:center;
+      }
+      .nav-burger span{display:block;width:18px;height:1.5px;background:var(--c-ink);transition:all 0.3s}
+      .nav-burger.open span:nth-child(1){transform:translateY(5.5px) rotate(45deg)}
+      .nav-burger.open span:nth-child(2){opacity:0}
+      .nav-burger.open span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+    }
+
+    /* ============================================================
+       6. Section 公共
+       ============================================================ */
+    .section{
+      position:relative;
+      min-height:100vh;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .section-eyebrow{
+      font-family:var(--font-en);
+      font-size:11px;letter-spacing:0.4em;
+      text-transform:uppercase;
+      color:var(--c-grey);
+      display:flex;align-items:center;gap:14px;
+      margin-bottom:36px;
+    }
+    .section-eyebrow::after{
+      content:'';flex:1;height:1px;background:var(--c-line);max-width:120px;
+    }
+
+    /* ============================================================
+       7. 巨字系统(hero-name):逐字 span + 实心/描边双层重叠
+       - 实心层在 z=2,描边层 absolute 重叠在 z=1
+       - 锚定左下角不挡人脸
+       ============================================================ */
+    .hero-name,.name-stack{
+      position:relative;
+      display:inline-block;
+      line-height:1.05;
+    }
+    .hero-line{
+      display:block;
+      position:relative;
+      font-family:var(--font-zh);
+      font-weight:600;
+      font-size:clamp(48px,9vw,108px);
+      letter-spacing:0.05em;
+      margin:0;
+    }
+    .hero-line .hero-fill,
+    .hero-line .hero-stroke{
+      display:inline-flex;align-items:baseline;
+      white-space:nowrap;
+    }
+    /* 实心层 */
+    .hero-line .hero-fill{
+      position:relative;z-index:1;
+      color:var(--c-ink);
+    }
+    /* 描边层:absolute 叠在实心层正上方(机器验 top 差=0),
+       color: transparent 让字内部透出 fill 的墨色,
+       -webkit-text-stroke 1.5px 金色给字外圈加描边光 */
+    .hero-line .hero-stroke{
+      position:absolute;left:0;top:0;z-index:2;
+      color:transparent;
+      -webkit-text-stroke:1.5px rgba(201,163,107,0.85);
+      text-stroke:1.5px rgba(201,163,107,0.85);
+      pointer-events:none;
+    }
+    .hero-line span{ /* 每个字一个 span */
+      display:inline-block;
+      padding-right:0.08em; /* 强制字间距,中文方块字 letter-spacing 不够 */
+      will-change:transform,opacity,filter;
+    }
+    .hero-line span:last-child{padding-right:0}
+    /* 暖白雾上字用墨色 → 描边金 */
+    .hero-line.theme-light .hero-fill{color:var(--c-bg)}
+    .hero-line.theme-light .hero-stroke{-webkit-text-stroke-color:rgba(201,163,107,0.9);opacity:0.8}
+
+    /* ============================================================
+       8. HERO(纯 CSS 视差 + ambient 音频,派单 §1 override:不擦帧)
+       ============================================================ */
+    .hero{
+      min-height:100vh;
+      display:grid;place-items:stretch;
+      background:var(--c-bg);
+    }
+    .hero-bg{
+      position:absolute;inset:0;z-index:0;overflow:hidden;
+    }
+    .hero-img{
+      width:100%;height:100%;object-fit:cover;
+      filter:brightness(1.05) saturate(0.85);
+      transform:scale(1.08);
+      transform-origin:center 30%;
+      transition:transform 1.2s var(--t-slow);
+    }
+    .hero:hover .hero-img{transform:scale(1.14)}
+    /* HERO 表情动效(video 在 img 之上,img 作为视频不可用时的兜底;派单原 CSS 顺序反了,已修正) */
+    .hero-video{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;z-index:1;
+      filter:brightness(1.05) saturate(0.85);
+    }
+    .hero-bg .hero-img{position:relative;z-index:0}
+    /* 视频失败/不支持时(.no-video 兜底类由 JS 在 video error 时加上)展示静态图 */
+    .hero-bg.no-video .hero-img{position:relative;z-index:1}
+    .hero-bg.no-video .hero-video{display:none}
+    .hero-mask{
+      position:absolute;inset:0;
+      background:
+        linear-gradient(180deg, rgba(244,239,230,0.55) 0%, rgba(244,239,230,0.35) 35%, var(--c-mask) 100%),
+        radial-gradient(ellipse at 30% 40%, rgba(255,250,240,0.4) 0%, transparent 55%);
+      z-index:1;
+    }
+    .hero-content{
+      position:absolute;left:6vw;right:6vw;bottom:9vh;
+      z-index:2;
+      max-width:var(--maxw);
+    }
+    .hero-logo{
+      font-family:var(--font-zh);
+      font-weight:300;
+      font-size:14px;letter-spacing:0.6em;
+      color:var(--c-grey);
+      margin-bottom:34px;
+      padding-left:0.6em;
+    }
+    .hero-stack{margin-bottom:24px}
+    .hero-slogan{
+      font-family:var(--font-en);
+      font-style:italic;
+      font-size:clamp(18px,2.2vw,26px);
+      color:var(--c-ink);
+      opacity:0.86;
+      margin-top:18px;
+      letter-spacing:0.04em;
+    }
+    .hero-keys{
+      font-family:var(--font-zh);
+      font-size:13px;letter-spacing:0.5em;
+      color:var(--c-grey);
+      margin-top:18px;
+      padding-left:0.5em;
+    }
+    .hero-keys::before{content:'— '}
+    .hero-cue{
+      position:absolute;left:50%;bottom:24px;
+      width:1px;height:60px;background:var(--c-line);
+      transform:translateX(-50%);
+      z-index:3;
+      overflow:hidden;
+    }
+    .hero-cue::after{
+      content:'';position:absolute;left:0;top:0;width:1px;height:18px;
+      background:var(--c-gold);
+      animation:drop 2.2s var(--t-slow) infinite;
+    }
+    @keyframes drop{
+      0%{transform:translateY(-20px);opacity:0}
+      20%{opacity:1}
+      80%{opacity:1}
+      100%{transform:translateY(60px);opacity:0}
+    }
+    @media (max-width:680px){
+      .hero-content{left:5vw;right:5vw;bottom:11vh}
+      .hero-logo{margin-bottom:24px}
+    }
+
+    /* ============================================================
+       9. 身份段
+       ============================================================ */
+    .identity{
+      min-height:100vh;
+      display:grid;grid-template-columns:1fr 1fr;align-items:center;
+      gap:0;
+    }
+    .identity-bg{
+      position:absolute;inset:0;z-index:0;
+    }
+    .identity-bg img{
+      width:100%;height:100%;object-fit:cover;object-position:center 25%;
+      filter:brightness(1.05) saturate(0.85);
+    }
+    .identity-bg::after{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(90deg, transparent 0%, transparent 45%, var(--c-bg) 70%, var(--c-bg) 100%);
+    }
+    .identity-content{
+      position:relative;z-index:2;
+      padding:0 7vw;
+      grid-column:2;
+      max-width:720px;
+    }
+    .identity-name{font-size:clamp(40px,5.5vw,72px);line-height:1.1;margin:0 0 24px}
+    .identity-sub{
+      font-family:var(--font-en);font-style:italic;
+      font-size:clamp(18px,1.8vw,22px);
+      color:var(--c-gold);
+      letter-spacing:0.08em;
+      margin-bottom:32px;
+    }
+    .identity-bio{
+      font-size:16px;line-height:1.85;
+      color:var(--c-grey);
+      max-width:480px;
+    }
+    @media (max-width:860px){
+      .identity{grid-template-columns:1fr;grid-template-rows:50vh auto}
+      .identity-bg::after{
+        background:linear-gradient(180deg, transparent 0%, transparent 40%, var(--c-bg) 65%, var(--c-bg) 100%);
+      }
+      .identity-content{grid-column:1;grid-row:2;padding:0 6vw 12vh}
+    }
+
+    /* ============================================================
+       10. 信念段(场景 + 人像叠层)
+       ============================================================ */
+    .philosophy{
+      min-height:100vh;
+      display:grid;grid-template-columns:5fr 6fr;align-items:center;
+    }
+    .philosophy-bg{
+      position:absolute;inset:0;z-index:0;
+    }
+    .philosophy-bg img{
+      width:100%;height:100%;object-fit:cover;
+      filter:brightness(0.7) saturate(0.8);
+    }
+    .philosophy-bg::after{
+      content:'';position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse at 25% 50%, rgba(244,239,230,0.55) 0%, transparent 50%),
+        linear-gradient(90deg, rgba(244,239,230,0.92) 0%, rgba(244,239,230,0.5) 30%, transparent 60%);
+    }
+    .philosophy-fg img{width:100%;height:100%;object-fit:cover;filter:brightness(1.05) saturate(0.85)}
+    .philosophy-content{
+      position:relative;z-index:2;
+      padding:0 5vw 0 6vw;
+      max-width:780px;
+    }
+    .philosophy-quote{
+      font-size:clamp(22px,2.4vw,32px);
+      line-height:1.55;
+      margin:0 0 24px;
+      max-width:680px;
+    }
+    /* 关键: 强制覆盖 .hero-line 的 48-108px 巨字 */
+    .philosophy-quote .hero-line{
+      font-size:clamp(22px,2.4vw,32px) !important;
+      line-height:1.55 !important;
+      font-weight:500;
+    }
+    .philosophy-quote .hero-fill > span,
+    .philosophy-quote .hero-stroke > span{
+      font-size:inherit;
+      line-height:inherit;
+      font-weight:inherit;
+    }
+    .philosophy-quote .hero-line{
+      display:block;
+      margin:0 0 0.1em;
+    }
+    .philosophy-quote .hero-line:last-child{
+      margin-bottom:0;
+    }
+    .philosophy-quote .hero-stroke{
+      display:none;
+    }
+    .philosophy-en{
+      font-family:var(--font-en);font-style:italic;
+      font-size:clamp(16px,1.4vw,20px);
+      color:var(--c-grey);
+      letter-spacing:0.03em;
+    }
+    @media (max-width:860px){
+      .philosophy{grid-template-columns:1fr}
+      .philosophy-bg::after{
+        background:linear-gradient(180deg, var(--c-bg) 0%, rgba(244,239,230,0.6) 25%, transparent 50%, var(--c-bg) 100%);
+      }
+      .philosophy-content{padding:6vh 6vw 0;max-width:none}
+    }
+
+    /* ============================================================
+       11. 作品集
+       ============================================================ */
+    .works{
+      min-height:100vh;
+      padding:14vh 6vw;
+      background:var(--c-bg);
+    }
+    .works-head{max-width:var(--maxw);margin:0 auto 8vh}
+    .works-title{
+      font-size:clamp(40px,5.5vw,72px);line-height:1.1;
+      margin:0;
+    }
+    .works-grid{
+      max-width:var(--maxw);margin:0 auto;
+      display:grid;grid-template-columns:repeat(2,1fr);gap:48px;
+    }
+    .work-card{
+      position:relative;aspect-ratio:16/10;overflow:hidden;
+      background:#E8E0D2;
+      cursor:pointer;
+      transition:transform 0.6s var(--t-base);
+      transform-style:preserve-3d;
+      will-change:transform;
+    }
+    .work-card img{
+      width:100%;height:100%;object-fit:cover;
+      filter:brightness(1.05) saturate(0.85);
+      transition:transform 1.2s var(--t-slow);
+    }
+    .work-card:hover{box-shadow:0 24px 60px -20px rgba(42,36,25,0.25)}
+    .work-card:hover img{transform:scale(1.06)}
+    .work-card .work-meta{
+      position:absolute;left:24px;bottom:24px;right:24px;
+      color:var(--c-bg);
+      z-index:2;
+      text-shadow:0 1px 12px rgba(0,0,0,0.4);
+    }
+    .work-card .work-meta::before{
+      content:'';position:absolute;inset:-40px -24px -24px;
+      background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.55) 100%);
+      z-index:-1;
+    }
+    .work-card h3{
+      font-family:var(--font-zh);
+      font-weight:400;font-size:22px;letter-spacing:0.2em;
+      margin-bottom:6px;
+    }
+    .work-card .work-meta p{
+          font-family:var(--font-en);font-style:italic;
+          font-size:14px;letter-spacing:0.05em;
+          opacity:0.85;
+        }
+        /* 4 列瑜伽小图 · 不裁剪人物 */
+            .work-card-yoga{aspect-ratio:16/6}
+            .yoga-grid{
+              position:absolute;inset:0;
+              display:grid;grid-template-columns:repeat(4,1fr);
+              gap:3px;padding:3px;
+            }
+            .yoga-grid img{
+              width:100%;height:100%;object-fit:contain;object-position:center;
+              background:#E8E0D2;
+              filter:brightness(1.05) saturate(0.85);
+              transition:transform 1.2s var(--t-slow);
+            }
+            .yoga-grid img:hover{transform:scale(1.08)}
+    @media (max-width:680px){
+              .works{padding:10vh 5vw}
+              .works-grid{grid-template-columns:1fr;gap:24px}
+              .contact-grid{grid-template-columns:repeat(3,1fr);gap:12px}
+              .contact-btn{width:100%;height:96px}
+              .contact-btn-icon{width:36px;height:36px}
+              .contact-btn-icon svg{width:22px;height:22px}
+              .contact-btn-name{font-size:14px}
+              .contact-btn-meta{font-size:10px}
+              /* 瑜伽陪伴营手机端改 2x2，每张图人物完整 */
+              .work-card-yoga{aspect-ratio:4/3}
+              .yoga-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}
+            }
+
+    /* ============================================================
+       12. 金句段(kinetic 逐字入场)
+       ============================================================ */
+    .quotes{
+      min-height:100vh;
+      display:flex;align-items:center;
+      padding:14vh 6vw;
+      position:relative;
+    }
+    .quotes-bg{
+      position:absolute;inset:0;z-index:0;
+    }
+    .quotes-bg img{
+      width:100%;height:100%;object-fit:cover;
+      filter:blur(18px) brightness(0.9) saturate(0.8);
+      transform:scale(1.15);
+    }
+    .quotes-bg::after{
+      content:'';position:absolute;inset:0;
+      background:rgba(244,239,230,0.78);
+    }
+    .quotes-list{
+      position:relative;z-index:2;
+      max-width:1100px;margin:0 auto;width:100%;
+      display:flex;flex-direction:column;gap:14vh;
+    }
+    .quote{margin:0;padding:0}
+    .quote-zh{
+      font-family:var(--font-zh);
+      font-weight:600;
+      font-size:clamp(28px,3.8vw,48px);
+      line-height:1.5;
+      color:var(--c-ink);
+      margin-bottom:20px;
+      letter-spacing:0.05em;
+    }
+    .quote-en{
+      font-family:var(--font-en);font-style:italic;
+      font-size:clamp(16px,1.4vw,20px);
+      color:var(--c-grey);
+      letter-spacing:0.04em;
+    }
+    .quote .kc{
+      display:inline-block;
+      opacity:0;transform:translateY(28px);filter:blur(4px);
+      transition:opacity 0.7s var(--t-base),transform 0.7s var(--t-base),filter 0.7s var(--t-base);
+    }
+    .quote.in .kc{opacity:1;transform:translateY(0);filter:blur(0)}
+    @media (max-width:680px){
+      .quotes{padding:10vh 5vw}
+      .quotes-list{gap:10vh}
+    }
+
+    /* ============================================================
+       13. 数据段(statpop 数字滚动)
+       ============================================================ */
+    .data{
+      min-height:100vh;
+      display:flex;align-items:center;
+      padding:14vh 6vw;
+      position:relative;
+    }
+    .data-bg{position:absolute;inset:0;z-index:0}
+    .data-bg img{
+      width:100%;height:100%;object-fit:cover;
+      filter:brightness(0.55) saturate(0.8);
+    }
+    .data-bg::after{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(180deg, rgba(42,36,25,0.4) 0%, rgba(42,36,25,0.7) 100%);
+    }
+    .data-list{
+      position:relative;z-index:2;
+      max-width:var(--maxw);margin:0 auto;width:100%;
+      display:grid;grid-template-columns:repeat(4,1fr);gap:60px;
+      color:var(--c-bg);
+    }
+    .data-item{
+      text-align:left;
+      position:relative;
+    }
+    .data-item::after{
+      content:'';position:absolute;right:-30px;top:18%;height:64%;width:1px;
+      background:rgba(244,239,230,0.25);
+    }
+    .data-item:last-child::after{display:none}
+    .data-num{
+      font-family:var(--font-en);
+      font-weight:500;
+      font-size:clamp(64px,8vw,128px);
+      line-height:1;letter-spacing:-0.02em;
+      color:var(--c-bg);
+      margin-bottom:18px;
+    }
+    .data-num.pop{animation:statpop 0.7s var(--t-base)}
+    @keyframes statpop{
+      0%{transform:scale(0.85);opacity:0.4}
+      40%{transform:scale(1.08);opacity:1}
+      100%{transform:scale(1);opacity:1}
+    }
+    .data-label{
+      font-family:var(--font-zh);
+      font-size:14px;letter-spacing:0.3em;
+      color:rgba(244,239,230,0.78);
+    }
+    .data-label [data-fill]{color:rgba(201,163,107,0.7);font-size:12px;letter-spacing:0.05em}
+    @media (max-width:860px){
+      .data-list{grid-template-columns:repeat(2,1fr);gap:48px 24px}
+      .data-item:nth-child(2)::after{display:none}
+    }
+    @media (max-width:480px){
+      .data-list{grid-template-columns:1fr;gap:36px}
+      .data-item::after{display:none !important}
+    }
+
+    /* ============================================================
+       14. 联系段(CTA + 二维码 + 平台)
+       ============================================================ */
+    .contact{
+      min-height:100vh;
+      display:flex;align-items:center;justify-content:center;
+      padding:14vh 6vw;
+      background:var(--c-bg);
+      text-align:center;
+    }
+    .contact-content{max-width:880px;width:100%;margin:0 auto}
+    .contact-content .section-eyebrow{justify-content:center}
+    .contact-content .section-eyebrow::after{display:none}
+    .contact-headline{
+      font-size:clamp(32px,4.2vw,56px);line-height:1.3;
+      margin:0 0 12px;font-weight:500;
+    }
+    .contact-sub{
+      font-family:var(--font-en);font-style:italic;
+      font-size:clamp(15px,1.3vw,18px);
+      color:var(--c-grey);
+      margin-bottom:48px;
+    }
+    .cta-btn{
+      display:inline-block;
+      font-family:var(--font-en);
+      font-size:18px;letter-spacing:0.4em;
+      text-transform:uppercase;
+      padding:18px 56px;
+      color:var(--c-bg);
+      background:var(--c-gold);
+      border:1px solid var(--c-gold);
+      transition:all 0.5s var(--t-base);
+      margin-bottom:80px;
+    }
+    .cta-btn:hover{
+      background:transparent;color:var(--c-gold);
+      letter-spacing:0.5em;
+    }
+    .contact-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:36px;
+      max-width:680px;margin:0 auto;
+    }
+    .contact-card{
+      display:flex;flex-direction:column;align-items:center;gap:14px;
+    }
+    .qr-img{
+      width:140px;height:140px;
+      display:block;
+      border:1px solid var(--c-line);
+    }
+    .qr-placeholder{
+      width:140px;height:140px;
+      background:repeating-linear-gradient(45deg,#E8E0D2,#E8E0D2 6px,var(--c-bg) 6px,var(--c-bg) 12px);
+      border:1px solid var(--c-line);
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-en);font-size:10px;letter-spacing:0.2em;
+      color:var(--c-grey);
+    }
+    .contact-card p,.contact-card a{
+      font-family:var(--font-en);
+      font-size:13px;letter-spacing:0.25em;text-transform:uppercase;
+      color:var(--c-grey);
+    }
+    .contact-card a:hover{color:var(--c-gold)}
+        /* 联系平台按钮 · 真正可点击跳转 */
+        .contact-btn{
+          display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+          width:160px;height:160px;
+          background:linear-gradient(180deg,rgba(255,255,255,0.9) 0%,rgba(244,241,236,0.7) 100%);
+          border:1px solid var(--c-line);
+          border-radius:14px;
+          text-decoration:none;cursor:pointer;
+          transition:all .4s var(--t-slow);
+          font-family:var(--font-zh);color:var(--c-text);
+          box-shadow:0 4px 16px -8px rgba(26,26,26,0.08);
+        }
+        .contact-btn:hover{
+          transform:translateY(-4px);
+          box-shadow:0 16px 40px -16px rgba(201,169,97,0.4);
+          border-color:var(--c-gold);
+        }
+        .contact-btn-icon{
+          width:48px;height:48px;
+          display:flex;align-items:center;justify-content:center;
+          border-radius:50%;
+          background:rgba(255,255,255,0.6);
+        }
+        .contact-btn-wechat .contact-btn-icon{color:#07C160}
+        .contact-btn-xhs .contact-btn-icon{color:#FF2442}
+        .contact-btn-douyin .contact-btn-icon{color:#161823}
+        .contact-btn-name{
+          font-size:18px;letter-spacing:0.15em;font-weight:500;
+          color:var(--c-text);
+        }
+        .contact-btn-meta{
+          font-family:var(--font-en);font-style:italic;
+          font-size:11px;letter-spacing:0.15em;
+          color:var(--c-grey);
+        }
+    @media (max-width:680px){
+      .contact-grid{grid-template-columns:1fr;gap:32px}
+    }
+
+    /* ============================================================
+       15. 收尾段
+       ============================================================ */
+    .farewell{
+      min-height:100vh;
+      display:flex;align-items:center;justify-content:center;
+      position:relative;
+      background:var(--c-deep);
+      color:var(--c-bg);
+    }
+    .farewell-bg{position:absolute;inset:0;z-index:0;opacity:0.45}
+    .farewell-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(0.7) saturate(0.7)}
+    .farewell-content{
+      position:relative;z-index:2;text-align:center;
+    }
+    .farewell-logo{
+      font-family:var(--font-zh);
+      font-weight:300;
+      font-size:clamp(32px,4.2vw,56px);
+      letter-spacing:0.6em;
+      padding-left:0.6em;
+      margin-bottom:32px;
+      color:var(--c-bg);
+    }
+    .farewell-text{
+      font-family:var(--font-en);font-style:italic;
+      font-size:clamp(18px,1.8vw,22px);
+      letter-spacing:0.3em;
+      color:rgba(244,239,230,0.7);
+    }
+    .farewell-eyebrow{
+      font-family:var(--font-en);
+      font-size:10.5px;letter-spacing:0.4em;text-transform:uppercase;
+      color:rgba(244,239,230,0.45);
+      margin-bottom:60px;
+    }
+
+    /* ============================================================
+       16. 声音开关(右下角)
+       ============================================================ */
+    .audio-toggle{
+      position:fixed;right:24px;bottom:24px;z-index:300;
+      display:flex;align-items:center;gap:10px;
+      padding:10px 14px;
+      background:rgba(244,239,230,0.85);
+      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+      border:1px solid var(--c-line);border-radius:999px;
+      font-family:var(--font-en);font-size:10.5px;letter-spacing:0.3em;
+      color:var(--c-deep);text-transform:uppercase;
+      transition:all 0.4s var(--t-base);
+    }
+    .audio-toggle:hover{border-color:var(--c-gold)}
+    .eq-bars{display:inline-flex;align-items:flex-end;gap:2px;width:14px;height:12px}
+    .eq-bars span{
+      display:inline-block;width:2px;background:var(--c-gold);
+      height:30%;
+      transform-origin:bottom;
+    }
+    .audio-toggle[data-state="on"] .eq-bars span{
+      animation:eq 0.9s var(--t-slow) infinite;
+    }
+    .audio-toggle[data-state="on"] .eq-bars span:nth-child(1){animation-delay:0s}
+    .audio-toggle[data-state="on"] .eq-bars span:nth-child(2){animation-delay:0.15s}
+    .audio-toggle[data-state="on"] .eq-bars span:nth-child(3){animation-delay:0.3s}
+    .audio-toggle[data-state="on"] .eq-bars span:nth-child(4){animation-delay:0.45s}
+    @keyframes eq{
+      0%,100%{height:30%}
+      50%{height:100%}
+    }
+    .audio-toggle[data-state="on"]{border-color:var(--c-gold)}
+    @media (max-width:680px){
+      .audio-toggle{right:14px;bottom:14px}
+    }
+
+    /* ============================================================
+       17. Reveal 系统(规格 §3)
+       - CSS 默认 opacity:1(降级时静态可见)
+       - JS 加载时给 .reveal 加 .pending(把 opacity 拉回 0)
+       - IntersectionObserver 添加 .in 复原 opacity:1
+       ============================================================ */
+    .reveal{
+      opacity:1;transform:none; /* 默认可见:无 JS 也好看 */
+    }
+    .reveal.pending{
+      opacity:0;transform:translateY(32px);
+    }
+    .reveal.in{
+      opacity:1;transform:translateY(0);
+      transition:opacity 1s var(--t-base),transform 1s var(--t-base);
+    }
+
+    /* ============================================================
+       18. prefers-reduced-motion 降级
+       ============================================================ */
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation-duration:0.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:0.01ms !important;
+        scroll-behavior:auto !important;
+      }
+      .reveal.pending{opacity:1;transform:none}
+    }
+
+    /* ============================================================
+       19. data-fill="pending" 占位视觉提示(交付前主脑清零)
+       属性保留供 grep / 自检,角标默认隐藏(避免视觉冗余)
+       ============================================================ */
+    [data-fill="pending"]{
+      position:relative;
+    }
+    [data-fill="pending"]::after{
+      content:none;
+    }
+    /* 二维码占位例外:pending 标签放右上角(肉眼复核提示) */
+    .qr-placeholder[data-fill="pending"]::after{
+      content:'pending';
+      position:absolute;top:6px;right:6px;margin:0;
+      font-family:var(--font-en);font-size:9px;letter-spacing:0.2em;
+      color:var(--c-gold);opacity:0.6;
+    }
+  </style>
+</head>
+<body>
+  <!-- 颗粒滤镜 -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- HUD 四角(10.5px 窄字) -->
+  <div class="hud hud-tl" data-hud="tl">N · 30°10′ · CHINA</div>
+  <div class="hud hud-tr" data-hud="tr">LI · YAN · YAN</div>
+  <div class="hud hud-bl" data-hud="bl">© 2026</div>
+  <div class="hud hud-br" data-hud="br">EST · CHINA</div>
+
+  <!-- NAV -->
+  <nav class="nav" aria-label="主导航">
+    <a href="#hero" class="nav-logo">黎焱焱</a>
+    <ul class="nav-menu" id="navMenu">
+      <li><a href="#identity">身份</a></li>
+      <li><a href="#philosophy">信念</a></li>
+      <li><a href="#works">作品</a></li>
+      <li><a href="#contact">联系</a></li>
+    </ul>
+    <div class="nav-platforms">
+      <a href="#" class="platform-pill" data-fill="pending" data-target="feishu-link" data-label="飞书">飞书</a>
+      <a href="#" class="platform-pill" data-fill="pending" data-target="wechat-link" data-label="微信">微信</a>
+    </div>
+    <button class="nav-burger" id="navBurger" aria-label="菜单" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ========== 1. HERO ========== -->
+  <section id="hero" class="section hero" data-section="hero">
+    <div class="hero-bg">
+      
+      <img src="assets/img_hero_main.jpg" alt="黎焱焱" class="hero-img" decoding="async" fetchpriority="high">
+      <div class="hero-mask" aria-hidden="true"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-logo">黎焱焱</div>
+      <div class="hero-stack" id="heroStack">
+        <!-- 巨字:三行,每行一个 hero-line,实心/描边双层 absolute 重叠 -->
+        <h1 class="hero-name" aria-label="瑜伽人 · 颂钵疗愈师 · 学 AI 的人">
+          <span class="hero-line">
+            <span class="hero-fill"><span>瑜</span><span>伽</span><span>人</span></span>
+            <span class="hero-stroke" aria-hidden="true"><span>瑜</span><span>伽</span><span>人</span></span>
+          </span>
+          <span class="hero-line">
+            <span class="hero-fill"><span>颂</span><span>钵</span><span>疗</span><span>愈</span><span>师</span></span>
+            <span class="hero-stroke" aria-hidden="true"><span>颂</span><span>钵</span><span>疗</span><span>愈</span><span>师</span></span>
+          </span>
+          <span class="hero-line">
+            <span class="hero-fill"><span>学</span><span>AI</span><span>的</span><span>人</span></span>
+            <span class="hero-stroke" aria-hidden="true"><span>学</span><span>AI</span><span>的</span><span>人</span></span>
+          </span>
+        </h1>
+      </div>
+      <p class="hero-slogan en" id="heroSlogan">在东方与未来之间 · 听身体的声音</p>
+      <p class="hero-keys">颂钵 · 脉轮 · 瑜伽 · 身心疗愈 · AI 协作</p>
+    </div>
+    <div class="hero-cue" aria-hidden="true"></div>
+  </section>
+
+  <!-- ========== 2. 身份 ========== -->
+  <section id="identity" class="section identity" data-section="identity">
+    <div class="identity-bg">
+      <img src="assets/img_identity_main.jpg" alt="" loading="lazy" decoding="async">
+    </div>
+    <div class="identity-content reveal">
+      <div class="section-eyebrow">I · WHO</div>
+      <h2 class="identity-name" aria-label="黎焱焱">
+        <span class="hero-line">
+          <span class="hero-fill"><span>黎</span><span>焱</span><span>焱</span></span>
+          <span class="hero-stroke" aria-hidden="true"><span>黎</span><span>焱</span><span>焱</span></span>
+        </span>
+      </h2>
+      <p class="identity-sub en">Healing · Learning · Creating</p>
+      <p class="identity-bio" data-fill="filled">潜意识沟通 8 年 · 颂钵疗愈 3 年 · 瑜伽 1 年 · AI 1 年,正在把自己的成长结晶成可分享的智慧。</p>
+    </div>
+  </section>
+
+  <!-- ========== 3. 信念 ========== -->
+  <section id="philosophy" class="section philosophy" data-section="philosophy">
+    <div class="philosophy-bg">
+      <img src="assets/img_philosophy_scene.jpg" alt="" loading="lazy" decoding="async">
+    </div>
+    <div class="philosophy-content reveal">
+      <div class="section-eyebrow">II · BELIEF</div>
+      <h2 class="philosophy-quote">
+        <span class="hero-line">
+          <span class="hero-fill"><span>身</span><span>体</span><span>记</span><span>得</span><span>一</span><span>切</span><span>,</span></span>
+          <span class="hero-stroke" aria-hidden="true"><span>身</span><span>体</span><span>记</span><span>得</span><span>一</span><span>切</span><span>,</span></span>
+        </span>
+        <span class="hero-line">
+          <span class="hero-fill"><span>我</span><span>们</span><span>要</span><span>做</span><span>的</span><span>,</span><span>只</span><span>是</span><span>让</span><span>它</span></span>
+          <span class="hero-stroke" aria-hidden="true"><span>我</span><span>们</span><span>要</span><span>做</span><span>的</span><span>,</span><span>只</span><span>是</span><span>让</span><span>它</span></span>
+        </span>
+        <span class="hero-line">
+          <span class="hero-fill"><span>重</span><span>新</span><span>柔</span><span>软</span><span>。</span></span>
+          <span class="hero-stroke" aria-hidden="true"><span>重</span><span>新</span><span>柔</span><span>软</span><span>。</span></span>
+        </span>
+      </h2>
+      <p class="philosophy-en">The body remembers everything. We simply help it soften again.</p>
+    </div>
+  </section>
+
+  <!-- ========== 4. 作品集 ========== -->
+  <section id="works" class="section works" data-section="works">
+    <div class="works-head">
+      <div class="section-eyebrow reveal">III · WORKS</div>
+      <h2 class="works-title reveal">作品集</h2>
+    </div>
+    <div class="works-grid">
+      <article class="work-card reveal" data-card>
+        <img src="assets/works_01_real.jpg" alt="疗愈工作坊" loading="lazy" decoding="async">
+        <div class="work-meta">
+          <h3>疗愈工作坊</h3>
+        </div>
+      </article>
+      <article class="work-card reveal" data-card>
+        <img src="assets/works_02_real.jpg" alt="潜意识沟通" loading="lazy" decoding="async">
+        <div class="work-meta">
+          <h3>潜意识沟通</h3>
+        </div>
+      </article>
+      <article class="work-card work-card-yoga reveal" data-card>
+              <div class="yoga-grid">
+                <img src="assets/works_yoga_01.jpg" alt="瑜伽陪伴 1" loading="lazy" decoding="async">
+                <img src="assets/works_yoga_02.jpg" alt="瑜伽陪伴 2" loading="lazy" decoding="async">
+                <img src="assets/works_yoga_03.jpg" alt="瑜伽陪伴 3" loading="lazy" decoding="async">
+                <img src="assets/works_yoga_04.jpg" alt="瑜伽陪伴 4" loading="lazy" decoding="async">
+              </div>
+              <div class="work-meta">
+                <h3>瑜伽陪伴营</h3>
+              </div>
+            </article>
+      <article class="work-card reveal" data-card>
+        <img src="assets/works_04_real.jpg" alt="个人网站设计" loading="lazy" decoding="async">
+        <div class="work-meta">
+          <h3>个人网站设计</h3>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ========== 5. 金句 ========== -->
+  <section id="quotes" class="section quotes" data-section="quotes">
+    <div class="quotes-bg">
+      <img src="assets/img_quote_bg.jpg" alt="" loading="lazy" decoding="async">
+    </div>
+    <div class="quotes-list">
+      <blockquote class="quote reveal kinetic" data-fill="pending">
+        <p class="quote-zh"><span class="kc">你</span><span class="kc">在</span><span class="kc">听</span><span class="kc">别</span><span class="kc">人</span><span class="kc">说</span><span class="kc">话</span><span class="kc">,</span><span class="kc">身</span><span class="kc">体</span><span class="kc">却</span><span class="kc">在</span><span class="kc">替</span><span class="kc">你</span><span class="kc">说</span><span class="kc">。</span></p>
+        <p class="quote-en">What your body says when words stop.</p>
+      </blockquote>
+      <blockquote class="quote reveal kinetic" data-fill="pending">
+        <p class="quote-zh"><span class="kc">呼</span><span class="kc">吸</span><span class="kc">之</span><span class="kc">间</span><span class="kc">,</span><span class="kc">一</span><span class="kc">切</span><span class="kc">都</span><span class="kc">在</span><span class="kc">。</span></p>
+        <p class="quote-en">Between breaths, everything is.</p>
+      </blockquote>
+      <blockquote class="quote reveal kinetic" data-fill="pending">
+        <p class="quote-zh"><span class="kc">不</span><span class="kc">是</span><span class="kc">变</span><span class="kc">得</span><span class="kc">更</span><span class="kc">好</span><span class="kc">,</span><span class="kc">是</span><span class="kc">终</span><span class="kc">于</span><span class="kc">允</span><span class="kc">许</span><span class="kc">自</span><span class="kc">己</span><span class="kc">。</span></p>
+        <p class="quote-en">Not becoming better — finally allowing.</p>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ========== 6. 数据 ========== -->
+  <section id="data" class="section data" data-section="data">
+    <div class="data-bg">
+      <img src="assets/img_data_team.jpg" alt="" loading="lazy" decoding="async">
+    </div>
+    <div class="data-list">
+      <div class="data-item reveal" data-stat-item>
+        <div class="data-num mono statpop" data-num="3" data-suffix="+">0</div>
+        <div class="data-label">年颂钵习练</div>
+      </div>
+      <div class="data-item reveal" data-stat-item>
+        <div class="data-num mono statpop" data-num="12" data-suffix="+">0</div>
+        <div class="data-label">节疗愈课</div>
+      </div>
+      <div class="data-item reveal" data-stat-item>
+        <div class="data-num mono statpop" data-num="1" data-suffix="">0</div>
+        <div class="data-label">套 AI 协作工作流</div>
+      </div>
+      <div class="data-item reveal" data-stat-item>
+        <div class="data-num mono statpop" data-num="∞" data-suffix="">0</div>
+        <div class="data-label">次被身体叫醒 <span data-fill="pending">(修辞,需替换)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 7. 联系 ========== -->
+  <section id="contact" class="section contact" data-section="contact">
+    <div class="contact-content reveal">
+      <div class="section-eyebrow">VII · CONTACT</div>
+      <h2 class="contact-headline">给身体一段被听见的时间。</h2>
+      <p class="contact-sub en">A quiet hour for the body to be heard.</p>
+      <a href="#" class="cta-btn" data-fill="pending" data-target="booking-url" data-label="约我">约我</a>
+      <div class="contact-grid">
+              <a href="weixin://" class="contact-btn contact-btn-wechat" data-platform="wechat">
+                <span class="contact-btn-icon" aria-hidden="true">
+                  <svg viewBox="0 0 32 32" width="28" height="28">
+                    <path fill="currentColor" d="M12.5 4C6.7 4 2 7.9 2 12.7c0 2.7 1.4 5.1 3.7 6.8L4.5 23l3.7-1.9c1.3.4 2.7.6 4.3.6h.5c-.3-.8-.5-1.7-.5-2.6 0-4.4 4.3-8 9.6-8 .3 0 .6 0 .9.1C21.6 7 17.4 4 12.5 4zM9.3 9.4c.7 0 1.3.6 1.3 1.3s-.6 1.3-1.3 1.3-1.3-.6-1.3-1.3.6-1.3 1.3-1.3zm6.4 0c.7 0 1.3.6 1.3 1.3s-.6 1.3-1.3 1.3-1.3-.6-1.3-1.3.6-1.3 1.3-1.3zM30 18.5c0-3.9-3.8-7-8.5-7s-8.5 3.1-8.5 7 3.8 7 8.5 7c1.2 0 2.4-.2 3.4-.5l2.8 1.5-.8-2.7c1.9-1.4 3.1-3.3 3.1-5.3zm-11.3-1.7c-.5 0-1-.5-1-1s.5-1 1-1 1 .5 1 1-.5 1-1 1zm5.5 0c-.5 0-1-.5-1-1s.5-1 1-1 1 .5 1 1-.5 1-1 1z"/>
+                  </svg>
+                </span>
+                <span class="contact-btn-name">微信</span>
+                <span class="contact-btn-meta">zabcat</span>
+              </a>
+              <a href="https://xhslink.cn/m/4x7njaHsGiv" target="_blank" rel="noopener" class="contact-btn contact-btn-xhs" data-platform="xhs">
+                <span class="contact-btn-icon" aria-hidden="true">
+                  <svg viewBox="0 0 32 32" width="28" height="28">
+                    <path fill="currentColor" d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2zm-4 18c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zm8 0c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/>
+                  </svg>
+                </span>
+                <span class="contact-btn-name">小红书</span>
+                <span class="contact-btn-meta">REDnote</span>
+              </a>
+              <a href="https://v.douyin.com/-PS9EjEessY/" target="_blank" rel="noopener" class="contact-btn contact-btn-douyin" data-platform="douyin">
+                <span class="contact-btn-icon" aria-hidden="true">
+                  <svg viewBox="0 0 32 32" width="28" height="28">
+                    <path fill="currentColor" d="M22 4h-4v16.5c0 2.5-2 4.5-4.5 4.5s-4.5-2-4.5-4.5 2-4.5 4.5-4.5c.5 0 1 .1 1.5.2v-4.2c-.5-.1-1-.1-1.5-.1-4.7 0-8.5 3.8-8.5 8.5S8.8 28.5 13.5 28.5s8.5-3.8 8.5-8.5V10c1.7 1.3 3.8 2 6 2V8c-3.3 0-6-2.7-6-6z"/>
+                  </svg>
+                </span>
+                <span class="contact-btn-name">抖音</span>
+                <span class="contact-btn-meta">Douyin</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- 平台弹窗 -->
+        <div class="platform-modal" id="platformModal" aria-hidden="true">
+          <div class="modal-backdrop" data-close></div>
+          <div class="modal-box" role="dialog" aria-labelledby="modalTitle">
+            <div class="modal-title" id="modalTitle">扫码 / 复制</div>
+            <div class="modal-display" id="modalDisplay"></div>
+            <div class="modal-actions">
+              <button class="modal-copy" id="modalCopy">复制</button>
+              <button class="modal-close" data-close>关闭</button>
+            </div>
+          </div>
+        </div>
+
+  <!-- ========== 8. 收尾 ========== -->
+  <section id="farewell" class="section farewell" data-section="farewell">
+    <div class="farewell-bg">
+      <img src="assets/img_footer_silhouette.jpg" alt="" loading="lazy" decoding="async">
+    </div>
+    <div class="farewell-content reveal">
+      <div class="farewell-eyebrow">Thank you · 谢谢</div>
+      <div class="farewell-logo">黎焱焱</div>
+      <p class="farewell-text en">Until we meet again.</p>
+    </div>
+  </section>
+
+  <!-- 声音开关(右下角) -->
+  <button class="audio-toggle" id="audioToggle" data-state="off" aria-label="声音开关">
+    <span class="eq-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+    <span class="audio-label">Sound</span>
+  </button>
+  <audio id="ambient" src="assets/ambient.mp3" preload="auto" loop></audio>
+
+  <script>
+    /* ============================================================
+       Mavis 写于 2026-08-09 · 黎焱焱作品集网站
+       单文件,无依赖,纯原生 JS + CSS
+       ============================================================ */
+    (function(){
+      'use strict';
+
+      /* 1) 工具:clamp / raf / qsa */
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+      const $  = (s, c=document) => c.querySelector(s);
+      const $$ = (s, c=document) => Array.from(c.querySelectorAll(s));
+
+      /* 2) Reveal 系统:CSS 默认 opacity:1;JS 启动时给 .reveal 加 .pending,
+            再由 IntersectionObserver 在进视口时移除 .pending + 加 .in
+            → 降级 / 无 JS 时页面静态可见 ✅ */
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function setupReveal(){
+        if (reduceMotion) return; // 降级:不动
+        $$('.reveal').forEach(el => el.classList.add('pending'));
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting){
+              e.target.classList.remove('pending');
+              e.target.classList.add('in');
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+        $$('.reveal').forEach(el => io.observe(el));
+      }
+
+      /* 3) Kinetic 金句:进视口后,给 .quote-zh 下的 .kc 逐字加 .in 动画 */
+      function setupKinetic(){
+        if (reduceMotion) return;
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting){
+              const quote = e.target;
+              const kcs = $$('.kc', quote);
+              kcs.forEach((kc, i) => {
+                setTimeout(() => kc.classList.add('in'), i * 55);
+              });
+              quote.classList.add('in');
+              io.unobserve(quote);
+            }
+          });
+        }, { threshold: 0.25 });
+        $$('.quote.kinetic').forEach(q => io.observe(q));
+      }
+
+      /* 4) statpop 数字滚动:进视口后从 0 → target,1.4s, ease-out,完成后弹一下 */
+      function setupStatPop(){
+        if (reduceMotion) return;
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting){
+              const el = e.target;
+              const target = el.dataset.num || '0';
+              const suffix = el.dataset.suffix || '';
+              const isInf = target === '∞';
+              el.textContent = '0';
+              const start = performance.now();
+              const dur = 1400;
+              function tick(now){
+                const p = clamp((now - start) / dur, 0, 1);
+                const e = 1 - Math.pow(1 - p, 3); // ease-out cubic
+                if (isInf){
+                  el.textContent = '∞';
+                } else {
+                  const v = Math.round(parseFloat(target) * e);
+                  el.textContent = v + (p === 1 ? suffix : '');
+                }
+                if (p < 1) requestAnimationFrame(tick);
+                else el.classList.add('pop');
+              }
+              requestAnimationFrame(tick);
+              io.unobserve(el);
+            }
+          });
+        }, { threshold: 0.5 });
+        $$('.statpop').forEach(el => io.observe(el));
+      }
+
+      /* 5) Hero:加载即自动入场(heroIntro) + 滚动接管 + 视差
+            heroIntro:页面 load 后 ~2s 把 .hero-line .hero-fill > span 逐字升起
+            滚动接管:st = idx/(字数+2)  lp = clamp((p - st)/0.14)
+            HERO 视差:hero-img 在 rAF 内 lerp 跟 scale
+       */
+      function splitHeroChars(){
+        // 把每个 hero-line 的 .hero-fill 和 .hero-stroke 下的字都包成 .hchar(若有外层 wrapper)
+        // 此处 .hero-fill > span 已经是字级,直接给它们加 .hchar 类
+        $$('.hero-line .hero-fill > span, .hero-line .hero-stroke > span').forEach(s => s.classList.add('hchar'));
+      }
+
+      function heroIntro(){
+        if (reduceMotion) {
+          // 降级:字直接显示,无动画
+          $$('.hero-line .hchar').forEach(s => { s.style.opacity=1; s.style.transform='none'; s.style.filter='none'; });
+          $('#heroSlogan') && ($('#heroSlogan').style.opacity=1);
+          return;
+        }
+        // 逐字延迟,每字 ~50ms,总长 ~2s
+        const chars = $$('.hero-line .hchar');
+        const per = 50;
+        chars.forEach((c, i) => {
+          c.style.transition = 'opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1), filter 0.7s cubic-bezier(.2,.7,.2,1)';
+          c.style.transitionDelay = (i * per) + 'ms';
+          requestAnimationFrame(() => {
+            c.style.opacity = 1;
+            c.style.transform = 'translateY(0) scale(1)';
+            c.style.filter = 'blur(0)';
+          });
+        });
+        // 副标语延迟 ~0.3s
+        const slogan = $('#heroSlogan');
+        if (slogan){
+          slogan.style.transition = 'opacity 0.9s cubic-bezier(.2,.7,.2,1) 0.3s, transform 0.9s cubic-bezier(.2,.7,.2,1) 0.3s';
+          slogan.style.opacity = 0;
+          slogan.style.transform = 'translateY(20px)';
+          setTimeout(() => { slogan.style.opacity=1; slogan.style.transform='translateY(0)'; }, 300);
+        }
+      }
+
+      function setupHeroScroll(){
+        if (reduceMotion) return;
+        const hero = $('#hero');
+        const heroImg = $('.hero-img', hero);
+        const chars = $$('.hero-line .hchar');
+        const total = chars.length;
+        let rafId = null;
+        let targetScale = 1.0;
+        let currentScale = 1.0;
+
+        function compute(){
+          const rect = hero.getBoundingClientRect();
+          const h = hero.offsetHeight;
+          // 滚动进度:hero 顶部从 0 滚到 -h,p 从 0 → 1
+          const p = clamp(-rect.top / h, 0, 1);
+          // 逐字 st = idx/(字数+2) lp = clamp((p - st)/0.14)
+          // 入场播完后 (p>0.4 以后) 完全显示;回滚回顶仍联动
+          chars.forEach((c, idx) => {
+            const st = idx / (total + 2);
+            const lp = clamp((p - st) / 0.14, 0, 1);
+            c.style.opacity = 0.2 + 0.8 * lp;
+            c.style.filter = `blur(${(1 - lp) * 3}px)`;
+            c.style.transform = `translateY(${(1 - lp) * 18}px)`;
+          });
+          // 视差:scale 1.0 → 1.18
+          targetScale = 1.0 + p * 0.18;
+        }
+
+        function tick(){
+          currentScale += (targetScale - currentScale) * 0.14;
+          heroImg.style.transform = `scale(${currentScale.toFixed(4)})`;
+          rafId = requestAnimationFrame(tick);
+        }
+
+        function onScroll(){ compute(); }
+        compute();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        rafId = requestAnimationFrame(tick);
+
+        // 不卸载:页面关掉时 rAF 一起停(浏览器处理)
+      }
+
+      /* 6) 声音开关 + 简洁的循环续播 */
+      function setupAudio(){
+        const btn = $('#audioToggle');
+        const audio = $('#ambient');
+        if (!btn || !audio) return;
+
+        // 加载好立刻设音量
+        audio.addEventListener('loadedmetadata', () => {
+          audio.volume = 0.55;
+        });
+
+        // ended 时直接 loop 重播(单纯保险)
+        audio.addEventListener('ended', () => {
+          if (btn.dataset.state === 'on'){
+            audio.currentTime = 0;
+            audio.play().catch(()=>{});
+          }
+        });
+
+        btn.addEventListener('click', async () => {
+          if (btn.dataset.state === 'off'){
+            try {
+              audio.volume = 0.55;
+              await audio.play();
+              btn.dataset.state = 'on';
+            } catch(err){
+              console.warn('[audio] play() 被拦截:', err);
+            }
+          } else {
+            audio.pause();
+            btn.dataset.state = 'off';
+          }
+        });
+      }
+
+      /* 7) 视口外视频/动画 pause(本次零视频,占位) */
+      function setupViewportPause(){
+        // 未来加视频时启用:对所有 [data-vp-pause],进视口 play,出视口 pause
+        const vids = $$('video[data-vp-pause]');
+        if (!vids.length) return;
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            const v = e.target;
+            if (e.isIntersecting) v.play().catch(()=>{});
+            else v.pause();
+          });
+        }, { threshold: 0.1 });
+        vids.forEach(v => io.observe(v));
+      }
+
+      /* 8) NAV 移动端折叠 */
+      function setupNav(){
+        const burger = $('#navBurger');
+        const menu = $('#navMenu');
+        if (!burger || !menu) return;
+        burger.addEventListener('click', () => {
+          const open = menu.classList.toggle('open');
+          burger.classList.toggle('open', open);
+          burger.setAttribute('aria-expanded', String(open));
+        });
+        $$('.nav-menu a').forEach(a => a.addEventListener('click', () => {
+          menu.classList.remove('open');
+          burger.classList.remove('open');
+          burger.setAttribute('aria-expanded', 'false');
+        }));
+      }
+
+      /* 9) 卡片 hover 3D 倾斜(根据鼠标位置) */
+      function setupCardTilt(){
+        if (reduceMotion) return;
+        $$('[data-card]').forEach(card => {
+          card.addEventListener('mousemove', (e) => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            card.style.transform = `perspective(900px) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 6).toFixed(2)}deg)`;
+          });
+          card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+          });
+        });
+      }
+
+      /* 10) HUD 实时化(TL 端经纬度可保留,这里只做轻微装饰) */
+      function setupHud(){
+        // 维持静态即可,保留可读性
+      }
+
+      /* ===== init ===== */
+      function init(){
+        splitHeroChars();
+        setupReveal();
+        setupKinetic();
+        setupStatPop();
+        setupNav();
+        setupAudio();
+        setupViewportPause();
+        setupCardTilt();
+        setupHud();
+        // heroIntro 必须在 DOM ready + 字体 load 后跑
+        if (document.readyState === 'complete') heroIntro();
+        else window.addEventListener('load', heroIntro);
+        // 滚动接管在 heroIntro 之后启动
+        if (document.readyState === 'complete') setupHeroScroll();
+        else window.addEventListener('load', setupHeroScroll);
+      }
+
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
+
+            /* 平台按钮弹窗 */
+            (function setupPlatformModal(){
+              const modal = document.getElementById('platformModal');
+              if (!modal) return;
+              const display = document.getElementById('modalDisplay');
+              const copyBtn = document.getElementById('modalCopy');
+              let currentValue = '';
+
+              function open(value, text){
+                currentValue = value;
+                display.textContent = text || value;
+                modal.setAttribute('aria-hidden', 'false');
+              }
+              function close(){ modal.setAttribute('aria-hidden', 'true'); }
+
+              document.querySelectorAll('.platform-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                  open(btn.dataset.value || '', btn.dataset.display || btn.dataset.value || '');
+                });
+              });
+              modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', close));
+              copyBtn.addEventListener('click', async () => {
+                try {
+                  await navigator.clipboard.writeText(currentValue);
+                  copyBtn.textContent = '已复制 ✓';
+                  setTimeout(() => { copyBtn.textContent = '复制'; }, 1500);
+                } catch (e) {
+                  // 兜底：旧浏览器
+                  const ta = document.createElement('textarea');
+                  ta.value = currentValue;
+                  document.body.appendChild(ta);
+                  ta.select();
+                  try { document.execCommand('copy'); copyBtn.textContent = '已复制 ✓'; } catch(_) {}
+                  document.body.removeChild(ta);
+                  setTimeout(() => { copyBtn.textContent = '复制'; }, 1500);
+                }
+              });
+              document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+            })();
+
+      /* HERO 表情动效 · 视频兜底:WebM/MP4 任意一能播就播;都失败 → 加 .no-video 类切到静态图 */
+      (function setupHeroVideo(){
+        const heroBg = document.querySelector('.hero-bg');
+        const v = heroBg && heroBg.querySelector('.hero-video');
+        if (!heroBg || !v) return;
+        let ok = false;
+        v.addEventListener('loadeddata', () => { ok = true; });
+        v.addEventListener('error', () => { if (!ok) heroBg.classList.add('no-video'); });
+        // 弱网/不支持:1.5s 内没 loadeddata 也直接 fallback
+        setTimeout(() => { if (!ok && v.readyState < 2) heroBg.classList.add('no-video'); }, 1500);
+        // 用户系统设置 prefers-reduced-motion 直接 fallback
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) heroBg.classList.add('no-video');
+      })();
+
+      // 全局错误监听(自检 B 段「脚本零报错」)
+      window.addEventListener('error', (e) => {
+        console.error('[runtime]', e.message, e.filename, e.lineno);
+      });
+      window.addEventListener('unhandledrejection', (e) => {
+        console.error('[promise]', e.reason);
+      });
+
+      // expose for ad-hoc tests
+      window.__site = { reveal: $$('.reveal').length, kinetic: $$('.quote.kinetic').length, statpop: $$('.statpop').length, hchar: $$('.hchar').length };
+      console.info('[黎焱焱] init', window.__site);
+    })();
+  </script>
+</body>
+</html>
